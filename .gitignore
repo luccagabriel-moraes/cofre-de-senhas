@@ -2,3 +2,4 @@ cofre.db
 __pycache__/
 *.pyc
 .vscode/
+*.db
