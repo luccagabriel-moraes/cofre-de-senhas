@@ -10,7 +10,7 @@ from PyQt6.QtGui import QFont
 
 from cryptography.fernet import InvalidToken
 from criptografia import gerar_chave, criptografar, descriptografar
-from banco_de_dado import inicializar_banco, adicionar_senha, retornar_todos_servicos
+from banco_de_dado import inicializar_banco, adicionar_senha, retornar_todos_servicos, atualizar_senha, deletar_senha
 
 
 # ──────────────────────────────────────────────
@@ -251,6 +251,7 @@ def criar_card_servico(servico: str, senha_crip, chave: bytes) -> QFrame:
             label_senha.setStyleSheet("color: rgba(255,255,255,150); border: none;")
             btn.setText("Mostrar")
 
+
     btn.toggled.connect(toggle)
     row.addWidget(label_nome)
     row.addWidget(label_senha, stretch=1)
@@ -278,8 +279,8 @@ def criar_card_adicionar(chave_ref: list, on_salvo) -> QFrame:
     lbl.setFont(QFont("Arial", 11, QFont.Weight.Bold))
     lbl.setStyleSheet("color: rgba(255,255,255,180); border: none;")
 
-    btn_toggle = QPushButton("Abrir")
-    btn_toggle.setFixedWidth(70)
+    btn_toggle = QPushButton("adicionar")
+    btn_toggle.setFixedWidth(75)
     btn_toggle.setCheckable(True)
 
     row_titulo.addWidget(lbl)
@@ -309,7 +310,7 @@ def criar_card_adicionar(chave_ref: list, on_salvo) -> QFrame:
     campo_senha.setStyleSheet(FIELD_STYLE)
 
     btn_salvar = QPushButton("Salvar")
-    btn_salvar.setFixedWidth(65)
+    btn_salvar.setFixedWidth(75)
 
     row_form.addWidget(aviso)
     row_form.addWidget(campo_servico)
@@ -324,7 +325,7 @@ def criar_card_adicionar(chave_ref: list, on_salvo) -> QFrame:
 
     def abrir_fechar(checked):
         form.setVisible(checked)
-        btn_toggle.setText("Fechar" if checked else "Abrir")
+        btn_toggle.setText("Fechar" if checked else "adicionar")
         card.setFixedHeight(110 if checked else 55)
 
     def salvar():
@@ -347,9 +348,180 @@ def criar_card_adicionar(chave_ref: list, on_salvo) -> QFrame:
 
     btn_toggle.toggled.connect(abrir_fechar)
     btn_salvar.clicked.connect(salvar)
+    campo_servico.returnPressed.connect(campo_senha.setFocus)
     campo_senha.returnPressed.connect(salvar)
     return card
 
+# ──────────────────────────────────────────────
+#  CARD de excluir serviço
+# ──────────────────────────────────────────────
+def criar_card_excluir(chave_ref: list, on_salvo) -> QFrame:
+    card = QFrame()
+    card.setFixedHeight(55)
+    card.setObjectName("card")
+    card.setStyleSheet(CARD_STYLE)
+
+    layout_card = QVBoxLayout()
+    layout_card.setContentsMargins(15, 8, 15, 8)
+    layout_card.setSpacing(8)
+
+    # ── linha do título e botão toggle ──
+    row_titulo = QHBoxLayout()
+    lbl = QLabel("- excluir um serviço")
+    lbl.setFont(QFont("Arial", 11, QFont.Weight.Bold))
+    lbl.setStyleSheet("color: rgba(255,255,255,180); border: none;")
+
+    btn_toggle = QPushButton("excluir")
+    btn_toggle.setFixedWidth(75)
+    btn_toggle.setCheckable(True)
+
+    row_titulo.addWidget(lbl)
+    row_titulo.addStretch()
+    row_titulo.addWidget(btn_toggle)
+
+    # ── formulário ──
+    form = QWidget()
+    form.setVisible(False)
+    row_form = QHBoxLayout()
+    row_form.setContentsMargins(0, 0, 0, 0)
+    row_form.setSpacing(8)
+
+    aviso = QLabel(" ")
+    aviso.setFixedWidth(110)
+    aviso.setStyleSheet("color: red; font-size: 10px; border: none;")
+
+    campo_servico = QLineEdit()
+    campo_servico.setPlaceholderText("Serviço (ex: Gmail)")
+    campo_servico.setFixedWidth(160)
+    campo_servico.setStyleSheet(FIELD_STYLE)
+
+    btn_excluir = QPushButton("excluir")
+    btn_excluir.setFixedWidth(75)
+
+    row_form.addWidget(aviso)
+    row_form.addWidget(campo_servico)
+    row_form.addWidget(btn_excluir)
+    row_form.addStretch()
+    form.setLayout(row_form)
+
+    layout_card.addLayout(row_titulo)
+    layout_card.addWidget(form)
+    card.setLayout(layout_card)
+
+    def abrir_fechar(checked):
+        form.setVisible(checked)
+        btn_toggle.setText("Fechar" if checked else "excluir")
+        card.setFixedHeight(110 if checked else 55)
+
+    def excluir():
+        servico = campo_servico.text().strip()
+        chave   = chave_ref[0]
+        if not servico:
+            aviso.setText("Informe o serviço.")
+            return
+        deletar_senha(servico)
+        campo_servico.clear()
+        aviso.setText(" ")
+        btn_toggle.setChecked(False)
+        on_salvo()
+
+    btn_toggle.toggled.connect(abrir_fechar)
+    btn_excluir.clicked.connect(excluir)
+    campo_servico.returnPressed.connect(excluir)
+
+    return card
+
+# ──────────────────────────────────────────────
+#  CARD de atualizar serviço
+# ──────────────────────────────────────────────
+def criar_card_atualizar(chave_ref: list, on_salvo) -> QFrame:
+    card = QFrame()
+    card.setFixedHeight(55)
+    card.setObjectName("card")
+    card.setStyleSheet(CARD_STYLE)
+
+    layout_card = QVBoxLayout()
+    layout_card.setContentsMargins(15, 8, 15, 8)
+    layout_card.setSpacing(8)
+
+    # ── linha do título e botão toggle ──
+    row_titulo = QHBoxLayout()
+    lbl = QLabel("* atualizar senha do serviço")
+    lbl.setFont(QFont("Arial", 11, QFont.Weight.Bold))
+    lbl.setStyleSheet("color: rgba(255,255,255,180); border: none;")
+
+    btn_toggle = QPushButton("atualizar")
+    btn_toggle.setFixedWidth(75)
+    btn_toggle.setCheckable(True)
+
+    row_titulo.addWidget(lbl)
+    row_titulo.addStretch()
+    row_titulo.addWidget(btn_toggle)
+
+    # ── formulário ──
+    form = QWidget()
+    form.setVisible(False)
+    row_form = QHBoxLayout()
+    row_form.setContentsMargins(0, 0, 0, 0)
+    row_form.setSpacing(8)
+
+    aviso = QLabel(" ")
+    aviso.setFixedWidth(110)
+    aviso.setStyleSheet("color: red; font-size: 10px; border: none;")
+
+    campo_servico = QLineEdit()
+    campo_servico.setPlaceholderText("Serviço (ex: Gmail)")
+    campo_servico.setFixedWidth(160)
+    campo_servico.setStyleSheet(FIELD_STYLE)
+
+    campo_senha = QLineEdit()
+    campo_senha.setPlaceholderText("Nova senha")
+    campo_senha.setEchoMode(QLineEdit.EchoMode.Password)
+    campo_senha.setFixedWidth(150)
+    campo_senha.setStyleSheet(FIELD_STYLE)
+
+    btn_salvar = QPushButton("Salvar")
+    btn_salvar.setFixedWidth(65)
+
+    row_form.addWidget(aviso)
+    row_form.addWidget(campo_servico)
+    row_form.addWidget(campo_senha)
+    row_form.addWidget(btn_salvar)
+    row_form.addStretch()
+    form.setLayout(row_form)
+
+    layout_card.addLayout(row_titulo)
+    layout_card.addWidget(form)
+    card.setLayout(layout_card)
+
+    def abrir_fechar(checked):
+        form.setVisible(checked)
+        btn_toggle.setText("Fechar" if checked else "atualizar")
+        card.setFixedHeight(110 if checked else 55)
+
+    def salvar():
+        servico = campo_servico.text().strip()
+        senha   = campo_senha.text()
+        chave   = chave_ref[0]
+        if not servico:
+            aviso.setText("Informe o serviço.")
+            return
+        if not senha:
+            aviso.setText("Informe a senha.")
+            return
+        senha_crip = criptografar(senha, chave)
+        atualizar_senha(servico, senha_crip)
+        campo_servico.clear()
+        campo_senha.clear()
+        aviso.setText(" ")
+        btn_toggle.setChecked(False)
+        on_salvo()
+
+    btn_toggle.toggled.connect(abrir_fechar)
+    btn_salvar.clicked.connect(salvar)
+    campo_servico.returnPressed.connect(campo_senha.setFocus)
+    campo_senha.returnPressed.connect(salvar)
+    return card
 
 # ──────────────────────────────────────────────
 #  TELA MENU
@@ -456,6 +628,13 @@ def criar_tela_menu() -> QWidget:
 
         # card de adicionar serviço
         layout_cards.addWidget(criar_card_adicionar(chave_ref, recarregar_cards))
+
+        #card de excluir serviço
+        layout_cards.addWidget(criar_card_excluir(chave_ref, recarregar_cards))
+
+
+        # card de atualizar serviço
+        layout_cards.addWidget(criar_card_atualizar(chave_ref, recarregar_cards))
 
     def confirmar_senha_mestra():
         texto = campo_mestra.text()
