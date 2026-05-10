@@ -49,7 +49,6 @@ Categories=Utility;Security;
         f.write(desktop_content)
     os.chmod(desktop_path, 0o755)
 
-    # Copia também pra área de trabalho
     for nome_desktop in ["Desktop", "Área de trabalho", "Área De Trabalho"]:
         desktop_dir = os.path.join(os.path.expanduser("~"), nome_desktop)
         if os.path.isdir(desktop_dir):
@@ -63,15 +62,50 @@ Categories=Utility;Security;
     print("✅ Atalho instalado! Procure 'Cofre de Senhas' no menu de aplicativos.\n")
 
 
+def encontrar_desktop_windows():
+    """Encontra a pasta Desktop correta no Windows, mesmo com OneDrive."""
+    # Tenta via variável de ambiente USERPROFILE/Desktop
+    tentativas = [
+        os.path.join(os.environ.get("USERPROFILE", ""), "Desktop"),
+        os.path.join(os.environ.get("USERPROFILE", ""), "OneDrive", "Desktop"),
+        os.path.join(os.environ.get("ONEDRIVE", ""), "Desktop"),
+        os.path.expanduser("~/Desktop"),
+        os.path.expanduser("~/OneDrive/Desktop"),
+    ]
+    for caminho in tentativas:
+        if os.path.isdir(caminho):
+            return caminho
+
+    # Tenta via PowerShell como último recurso
+    try:
+        resultado = subprocess.run(
+            ["powershell", "-Command",
+             "[Environment]::GetFolderPath('Desktop')"],
+            capture_output=True, text=True
+        )
+        caminho = resultado.stdout.strip()
+        if caminho and os.path.isdir(caminho):
+            return caminho
+    except Exception:
+        pass
+
+    return None
+
+
 def instalar_windows():
     print("🪟 Criando atalho para Windows...")
 
-    bat = os.path.join(PASTA, "iniciar_cofre.bat")
-    with open(bat, "w") as f:
-        f.write(f'@echo off\ncd /d "{PASTA}"\npython visual.py\n')
+    # pythonw.exe roda sem abrir janela de terminal
+    python_exe = sys.executable.replace("python.exe", "pythonw.exe")
+    if not os.path.exists(python_exe):
+        python_exe = sys.executable
 
-    # Cria .lnk na área de trabalho via PowerShell
-    desktop = os.path.join(os.path.expanduser("~"), "Desktop")
+    desktop = encontrar_desktop_windows()
+    if not desktop:
+        print("⚠️  Não foi possível encontrar a pasta Desktop.")
+        print(f"   Abra o app manualmente com: python visual.py")
+        return
+
     lnk_path = os.path.join(desktop, "Cofre de Senhas.lnk")
     icone = os.path.join(PASTA, "icone.ico")
     icone_linha = f'$s.IconLocation = "{icone}"' if os.path.exists(icone) else ""
@@ -79,14 +113,23 @@ def instalar_windows():
     ps_script = f"""
 $ws = New-Object -ComObject WScript.Shell
 $s = $ws.CreateShortcut("{lnk_path}")
-$s.TargetPath = "{bat}"
+$s.TargetPath = "{python_exe}"
+$s.Arguments = "visual.py"
 $s.WorkingDirectory = "{PASTA}"
 {icone_linha}
 $s.Save()
 """
-    subprocess.run(["powershell", "-Command", ps_script], check=False)
-    print(f"   → Atalho criado em {lnk_path}")
-    print("✅ Atalho instalado! O ícone apareceu na sua área de trabalho.\n")
+    resultado = subprocess.run(
+        ["powershell", "-Command", ps_script],
+        capture_output=True, text=True
+    )
+
+    if resultado.returncode == 0 and os.path.exists(lnk_path):
+        print(f"   → Atalho criado em {lnk_path}")
+        print("✅ Atalho instalado! O ícone apareceu na sua área de trabalho.\n")
+    else:
+        print(f"⚠️  Não foi possível criar o atalho automático.")
+        print(f"   Abra o app manualmente com: python visual.py")
 
 
 def main():
