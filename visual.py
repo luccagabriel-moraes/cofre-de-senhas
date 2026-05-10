@@ -21,7 +21,7 @@ def criar_label_aviso_red():
     aviso.setAlignment(Qt.AlignmentFlag.AlignCenter)
     aviso.setFixedSize(270, 25)
     aviso.setFont(QFont("Arial", 10, QFont.Weight.Bold))
-    aviso.setStyleSheet("color: red; border: none;")
+    aviso.setStyleSheet("color: #ff5555; border: none; background: transparent;")
     return aviso
 
 def keyring_get(service, key):
@@ -50,11 +50,14 @@ def criar_tela_cadastro(stack: QStackedWidget, app: QApplication):
     frame.setObjectName("frame")
     frame.setStyleSheet("""
         QFrame#frame {
-            background-color: rgba(255, 255, 255, 20);
+            background-color: #1e1e1e;
             border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 50);
+            border: 1px solid #333333;
         }
-        QLabel, QLineEdit, QPushButton { border: none; }
+        QLabel { border: none; color: #e0e0e0; background: transparent; }
+        QLineEdit { border: 1px solid #444; border-radius: 5px; padding: 5px; background-color: #2a2a2a; color: #e0e0e0; }
+        QPushButton { border: 1px solid #444; border-radius: 5px; padding: 5px; color: #e0e0e0; background-color: #2a2a2a; }
+        QPushButton:hover { background-color: #3a3a3a; }
     """)
 
     layout_frame = QVBoxLayout()
@@ -68,17 +71,17 @@ def criar_tela_cadastro(stack: QStackedWidget, app: QApplication):
     campo1.setEchoMode(QLineEdit.EchoMode.Password)
     campo1.setFixedWidth(200)
     campo1.setPlaceholderText("Digite sua senha...")
-    campo1.setStyleSheet("QLineEdit { border: 1px solid rgba(255,255,255,100); border-radius: 5px; padding: 5px; }")
+    
 
     campo2 = QLineEdit()
     campo2.setEchoMode(QLineEdit.EchoMode.Password)
     campo2.setFixedWidth(200)
     campo2.setPlaceholderText("Confirme sua senha...")
-    campo2.setStyleSheet("QLineEdit { border: 1px solid rgba(255,255,255,100); border-radius: 5px; padding: 5px; }")
+    
 
     botao = QPushButton("Cadastrar")
     botao.setFixedWidth(200)
-    botao.setStyleSheet("QPushButton { border: 1px solid rgba(255,255,255,200); border-radius: 5px; padding: 5px; }")
+    
 
     layout_frame.addStretch()
     layout_frame.addWidget(aviso, alignment=Qt.AlignmentFlag.AlignCenter)
@@ -127,11 +130,14 @@ def criar_tela_login(stack: QStackedWidget, app: QApplication):
     frame.setObjectName("frame")
     frame.setStyleSheet("""
         QFrame#frame {
-            background-color: rgba(255, 255, 255, 20);
+            background-color: #1e1e1e;
             border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 50);
+            border: 1px solid #333333;
         }
-        QLabel, QLineEdit, QPushButton { border: none; }
+        QLabel { border: none; color: #e0e0e0; background: transparent; }
+        QLineEdit { border: 1px solid #444; border-radius: 5px; padding: 5px; background-color: #2a2a2a; color: #e0e0e0; }
+        QPushButton { border: 1px solid #444; border-radius: 5px; padding: 5px; color: #e0e0e0; background-color: #2a2a2a; }
+        QPushButton:hover { background-color: #3a3a3a; }
     """)
 
     layout_frame = QVBoxLayout()
@@ -145,11 +151,11 @@ def criar_tela_login(stack: QStackedWidget, app: QApplication):
     campo.setEchoMode(QLineEdit.EchoMode.Password)
     campo.setFixedWidth(200)
     campo.setPlaceholderText("Digite sua senha...")
-    campo.setStyleSheet("QLineEdit { border: 1px solid rgba(255,255,255,100); border-radius: 5px; padding: 5px; }")
+    
 
     botao = QPushButton("Entrar")
     botao.setFixedWidth(200)
-    botao.setStyleSheet("QPushButton { border: 1px solid rgba(255,255,255,200); border-radius: 5px; padding: 5px; }")
+    
 
     layout_frame.addStretch()
     layout_frame.addWidget(aviso, alignment=Qt.AlignmentFlag.AlignCenter)
@@ -194,21 +200,22 @@ def criar_tela_login(stack: QStackedWidget, app: QApplication):
 # ──────────────────────────────────────────────
 CARD_STYLE = """
     QFrame#card {
-        background-color: rgba(255, 255, 255, 15);
+        background-color: #1e1e1e;
         border-radius: 10px;
-        border: 1px solid rgba(255, 255, 255, 40);
+        border: 1px solid #333333;
     }
-    QLabel { border: none; }
+    QLabel { border: none; color: #e0e0e0; background: transparent; }
     QPushButton {
-        border: 1px solid rgba(255, 255, 255, 120);
+        border: 1px solid #444444;
         border-radius: 5px;
         padding: 4px 10px;
-        color: white;
+        color: #e0e0e0;
+        background-color: #2a2a2a;
     }
-    QPushButton:hover { background-color: rgba(255, 255, 255, 30); }
+    QPushButton:hover { background-color: #3a3a3a; }
 """
 
-FIELD_STYLE = "QLineEdit { border: 1px solid rgba(255,255,255,100); border-radius: 5px; padding: 4px; }"
+FIELD_STYLE = "QLineEdit { border: 1px solid #444444; border-radius: 5px; padding: 4px; background-color: #2a2a2a; color: #e0e0e0; }"
 
 
 # ──────────────────────────────────────────────
@@ -229,7 +236,7 @@ def criar_card_servico(servico: str, senha_crip, chave: bytes) -> QFrame:
 
     label_senha = QLabel("••••••••")
     label_senha.setFont(QFont("Arial", 11))
-    label_senha.setStyleSheet("color: rgba(255,255,255,150); border: none;")
+    label_senha.setStyleSheet("color: #888888; border: none; background: transparent;")
 
     btn = QPushButton("Mostrar")
     btn.setFixedWidth(80)
@@ -241,14 +248,14 @@ def criar_card_servico(servico: str, senha_crip, chave: bytes) -> QFrame:
                 dado = senha_crip if isinstance(senha_crip, bytes) else senha_crip.encode()
                 texto = descriptografar(dado, chave)
                 label_senha.setText(texto)
-                label_senha.setStyleSheet("color: white; border: none;")
+                label_senha.setStyleSheet("color: #e0e0e0; border: none; background: transparent;")
             except (InvalidToken, Exception):
                 label_senha.setText("[chave incorreta]")
-                label_senha.setStyleSheet("color: red; border: none;")
+                label_senha.setStyleSheet("color: #ff5555; border: none; background: transparent;")
             btn.setText("Ocultar")
         else:
             label_senha.setText("••••••••")
-            label_senha.setStyleSheet("color: rgba(255,255,255,150); border: none;")
+            label_senha.setStyleSheet("color: #888888; border: none; background: transparent;")
             btn.setText("Mostrar")
 
 
@@ -277,7 +284,7 @@ def criar_card_adicionar(chave_ref: list, on_salvo) -> QFrame:
     row_titulo = QHBoxLayout()
     lbl = QLabel("+ Adicionar serviço")
     lbl.setFont(QFont("Arial", 11, QFont.Weight.Bold))
-    lbl.setStyleSheet("color: rgba(255,255,255,180); border: none;")
+    lbl.setStyleSheet("color: #aaaaaa; border: none; background: transparent;")
 
     btn_toggle = QPushButton("adicionar")
     btn_toggle.setFixedWidth(75)
@@ -369,7 +376,7 @@ def criar_card_excluir(chave_ref: list, on_salvo) -> QFrame:
     row_titulo = QHBoxLayout()
     lbl = QLabel("- excluir um serviço")
     lbl.setFont(QFont("Arial", 11, QFont.Weight.Bold))
-    lbl.setStyleSheet("color: rgba(255,255,255,180); border: none;")
+    lbl.setStyleSheet("color: #aaaaaa; border: none; background: transparent;")
 
     btn_toggle = QPushButton("excluir")
     btn_toggle.setFixedWidth(75)
@@ -448,7 +455,7 @@ def criar_card_atualizar(chave_ref: list, on_salvo) -> QFrame:
     row_titulo = QHBoxLayout()
     lbl = QLabel("* atualizar senha do serviço")
     lbl.setFont(QFont("Arial", 11, QFont.Weight.Bold))
-    lbl.setStyleSheet("color: rgba(255,255,255,180); border: none;")
+    lbl.setStyleSheet("color: #aaaaaa; border: none; background: transparent;")
 
     btn_toggle = QPushButton("atualizar")
     btn_toggle.setFixedWidth(75)
@@ -540,11 +547,14 @@ def criar_tela_menu() -> QWidget:
     frame.setObjectName("frame")
     frame.setStyleSheet("""
         QFrame#frame {
-            background-color: rgba(255, 255, 255, 20);
+            background-color: #1e1e1e;
             border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 50);
+            border: 1px solid #333333;
         }
-        QLabel, QLineEdit, QPushButton { border: none; }
+        QLabel { border: none; color: #e0e0e0; background: transparent; }
+        QLineEdit { border: 1px solid #444; border-radius: 5px; padding: 5px; background-color: #2a2a2a; color: #e0e0e0; }
+        QPushButton { border: 1px solid #444; border-radius: 5px; padding: 5px; color: #e0e0e0; background-color: #2a2a2a; }
+        QPushButton:hover { background-color: #3a3a3a; }
     """)
 
     layout_frame = QVBoxLayout()
@@ -558,11 +568,11 @@ def criar_tela_menu() -> QWidget:
     campo_mestra.setEchoMode(QLineEdit.EchoMode.Password)
     campo_mestra.setFixedWidth(200)
     campo_mestra.setPlaceholderText("Senha mestra...")
-    campo_mestra.setStyleSheet("QLineEdit { border: 1px solid rgba(255,255,255,100); border-radius: 5px; padding: 5px; }")
+    
 
     botao = QPushButton("Confirmar")
     botao.setFixedWidth(200)
-    botao.setStyleSheet("QPushButton { border: 1px solid rgba(255,255,255,200); border-radius: 5px; padding: 5px; }")
+    
 
     layout_frame.addStretch()
     layout_frame.addWidget(aviso, alignment=Qt.AlignmentFlag.AlignCenter)
@@ -595,10 +605,10 @@ def criar_tela_menu() -> QWidget:
     scroll.setStyleSheet("""
         QScrollArea { border: none; background: transparent; }
         QScrollBar:vertical {
-            background: rgba(255,255,255,10); width: 6px; border-radius: 3px;
+            background: #222222; width: 6px; border-radius: 3px;
         }
         QScrollBar::handle:vertical {
-            background: rgba(255,255,255,80); border-radius: 3px;
+            background: #555555; border-radius: 3px;
         }
     """)
 
@@ -674,10 +684,14 @@ def main():
 
     janela = QWidget()
     janela.setWindowTitle("Cofre de Senhas")
-    janela.setFixedSize(800, 600)
+    janela.setMinimumSize(800, 600)
+    janela.setStyleSheet("QWidget { background-color: #121212; color: #e0e0e0; }")
 
-    stack = QStackedWidget(janela)
-    stack.setFixedSize(800, 600)
+    layout_janela = QVBoxLayout(janela)
+    layout_janela.setContentsMargins(0, 0, 0, 0)
+
+    stack = QStackedWidget()
+    layout_janela.addWidget(stack)
 
     stack.addWidget(criar_tela_cadastro(stack, app))  # índice 0
     stack.addWidget(criar_tela_login(stack, app))     # índice 1
