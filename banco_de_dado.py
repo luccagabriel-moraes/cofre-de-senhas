@@ -32,6 +32,14 @@ def ler_senhas(servico: str):
     conn.close()
     return resultado
 
+def retornar_todos_servicos():
+    conn = sqlite3.connect("cofre.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT servico, senha FROM senhas")
+    resultado = cursor.fetchall() 
+    conn.close()
+    return resultado
+
 def atualizar_senha(servico: str, senha_crip: bytes):
     conn = sqlite3.connect("cofre.db")
     cursor = conn.cursor()
